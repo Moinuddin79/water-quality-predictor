@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Water Safety Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M13 2C13 2 4 11 4 17a9 9 0 0018 0C22 11 13 2 13 2z" fill="#3b82f6" opacity="0.15"/>
+          <path d="M13 2C13 2 4 11 4 17a9 9 0 0018 0C22 11 13 2 13 2z" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+        </svg>
+        <span>Water Safety Predictor</span>
+      </div>
+      <a href="/train" class="train-btn" onclick="return confirmTrain()">Run Training Pipeline</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="hero-label">MLOps Production Project</p>
+    <h1>Is this water safe?</h1>
+    <p class="hero-sub">Enter the chemical composition of a water sample. The XGBoost model will predict whether it is safe to drink.</p>
+  </section>
+
+  {% if result %}
+  <div class="result-banner {{ result_class }}">
+    <div class="result-icon">
+      {% if result_class == 'safe' %}
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#166534" stroke-width="1.5"/><path d="M7 11l3 3 5-5" stroke="#166534" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      {% else %}
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#991b1b" stroke-width="1.5"/><path d="M11 7v4M11 15h.01" stroke="#991b1b" stroke-width="1.5" stroke-linecap="round"/></svg>
+      {% endif %}
+    </div>
+    <div>
+      <p class="result-label">Prediction Result</p>
+      <p class="result-text">{{ result }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="form-card">
+    <h2>Water Sample Parameters</h2>
+    <p class="form-subtitle">Enter measured chemical levels from the water sample</p>
+    <form action="/predict" method="POST">
+      <div class="form-grid">
+
+        <div class="field">
+          <label for="aluminium">Aluminium (mg/L) <span class="ref">Safe: &lt; 0.2</span></label>
+          <input type="number" id="aluminium" name="aluminium" step="0.001" placeholder="e.g. 1.65" value="{{ request.form.get('aluminium', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="ammonia">Ammonia (mg/L) <span class="ref">Safe: &lt; 0.5</span></label>
+          <input type="number" id="ammonia" name="ammonia" step="0.001" placeholder="e.g. 9.08" value="{{ request.form.get('ammonia', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="arsenic">Arsenic (mg/L) <span class="ref">Safe: &lt; 0.01</span></label>
+          <input type="number" id="arsenic" name="arsenic" step="0.001" placeholder="e.g. 0.04" value="{{ request.form.get('arsenic', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="barium">Barium (mg/L) <span class="ref">Safe: &lt; 0.7</span></label>
+          <input type="number" id="barium" name="barium" step="0.001" placeholder="e.g. 2.85" value="{{ request.form.get('barium', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="cadmium">Cadmium (mg/L) <span class="ref">Safe: &lt; 0.003</span></label>
+          <input type="number" id="cadmium" name="cadmium" step="0.0001" placeholder="e.g. 0.007" value="{{ request.form.get('cadmium', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="chloramine">Chloramine (mg/L) <span class="ref">Safe: &lt; 4</span></label>
+          <input type="number" id="chloramine" name="chloramine" step="0.001" placeholder="e.g. 0.35" value="{{ request.form.get('chloramine', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="chromium">Chromium (mg/L) <span class="ref">Safe: &lt; 0.05</span></label>
+          <input type="number" id="chromium" name="chromium" step="0.001" placeholder="e.g. 0.83" value="{{ request.form.get('chromium', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="copper">Copper (mg/L) <span class="ref">Safe: &lt; 2</span></label>
+          <input type="number" id="copper" name="copper" step="0.001" placeholder="e.g. 0.17" value="{{ request.form.get('copper', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="flouride">Flouride (mg/L) <span class="ref">Safe: &lt; 1.5</span></label>
+          <input type="number" id="flouride" name="flouride" step="0.001" placeholder="e.g. 0.05" value="{{ request.form.get('flouride', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="bacteria">Bacteria (MPN/100mL) <span class="ref">Safe: 0</span></label>
+          <input type="number" id="bacteria" name="bacteria" step="0.01" placeholder="e.g. 0.2" value="{{ request.form.get('bacteria', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="viruses">Viruses (PFU/100mL) <span class="ref">Safe: 0</span></label>
+          <input type="number" id="viruses" name="viruses" step="0.01" placeholder="e.g. 0.0" value="{{ request.form.get('viruses', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="lead">Lead (mg/L) <span class="ref">Safe: &lt; 0.01</span></label>
+          <input type="number" id="lead" name="lead" step="0.0001" placeholder="e.g. 0.054" value="{{ request.form.get('lead', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="nitrates">Nitrates (mg/L) <span class="ref">Safe: &lt; 10</span></label>
+          <input type="number" id="nitrates" name="nitrates" step="0.01" placeholder="e.g. 16.08" value="{{ request.form.get('nitrates', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="nitrites">Nitrites (mg/L) <span class="ref">Safe: &lt; 1</span></label>
+          <input type="number" id="nitrites" name="nitrites" step="0.001" placeholder="e.g. 1.13" value="{{ request.form.get('nitrites', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="mercury">Mercury (mg/L) <span class="ref">Safe: &lt; 0.001</span></label>
+          <input type="number" id="mercury" name="mercury" step="0.0001" placeholder="e.g. 0.007" value="{{ request.form.get('mercury', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="perchlorate">Perchlorate (mg/L) <span class="ref">Safe: &lt; 15</span></label>
+          <input type="number" id="perchlorate" name="perchlorate" step="0.01" placeholder="e.g. 37.75" value="{{ request.form.get('perchlorate', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="radium">Radium (pCi/L) <span class="ref">Safe: &lt; 5</span></label>
+          <input type="number" id="radium" name="radium" step="0.01" placeholder="e.g. 6.78" value="{{ request.form.get('radium', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="selenium">Selenium (mg/L) <span class="ref">Safe: &lt; 0.05</span></label>
+          <input type="number" id="selenium" name="selenium" step="0.001" placeholder="e.g. 0.08" value="{{ request.form.get('selenium', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="silver">Silver (mg/L) <span class="ref">Safe: &lt; 0.1</span></label>
+          <input type="number" id="silver" name="silver" step="0.001" placeholder="e.g. 0.34" value="{{ request.form.get('silver', '') }}" required />
+        </div>
+
+        <div class="field">
+          <label for="uranium">Uranium (mg/L) <span class="ref">Safe: &lt; 0.03</span></label>
+          <input type="number" id="uranium" name="uranium" step="0.001" placeholder="e.g. 0.02" value="{{ request.form.get('uranium', '') }}" required />
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="predict-btn">Predict Water Safety</button>
+        <button type="reset" class="reset-btn">Clear Form</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="info-strip">
+    <div class="info-item"><span class="info-val">7,996</span><span class="info-key">Training samples</span></div>
+    <div class="info-sep"></div>
+    <div class="info-item"><span class="info-val">20</span><span class="info-key">Chemical features</span></div>
+    <div class="info-sep"></div>
+    <div class="info-item"><span class="info-val">XGBoost</span><span class="info-key">Model</span></div>
+    <div class="info-sep"></div>
+    <div class="info-item"><span class="info-val">SMOTETomek</span><span class="info-key">Imbalance handling</span></div>
+    <div class="info-sep"></div>
+    <div class="info-item"><span class="info-val">EvidentlyAI</span><span class="info-key">Drift monitoring</span></div>
+  </div>
+
+  <footer class="footer">
+    <p>Water Safety Predictor &mdash; MLOps Production Project &mdash; Deployed on AWS EC2</p>
+  </footer>
+</div>
+
+<script>
+function confirmTrain() {
+  if (confirm("This will trigger the full training pipeline. Continue?")) {
+    window.location.href = "/train";
+  }
+  return false;
+}
+</script>
+</body>
+</html>

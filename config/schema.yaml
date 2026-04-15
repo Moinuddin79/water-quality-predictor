@@ -1,0 +1,48 @@
+columns:
+  - aluminium
+  - ammonia
+  - arsenic
+  - barium
+  - cadmium
+  - chloramine
+  - chromium
+  - copper
+  - flouride
+  - bacteria
+  - viruses
+  - lead
+  - nitrates
+  - nitrites
+  - mercury
+  - perchlorate
+  - radium
+  - selenium
+  - silver
+  - uranium
+  - is_safe
+
+numerical_columns:
+  - aluminium
+  - ammonia
+  - arsenic
+  - barium
+  - cadmium
+  - chloramine
+  - chromium
+  - copper
+  - flouride
+  - bacteria
+  - viruses
+  - lead
+  - nitrates
+  - nitrites
+  - mercury
+  - perchlorate
+  - radium
+  - selenium
+  - silver
+  - uranium
+
+target_column: is_safe
+
+drop_columns: []
