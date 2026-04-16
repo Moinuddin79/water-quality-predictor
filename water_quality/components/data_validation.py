@@ -1,8 +1,11 @@
 import os
 import sys
 import pandas as pd
-from evidently.report import Report
 from evidently.metric_preset import DataDriftPreset
+try:
+    from evidently.report import Report
+except ImportError:
+    Report = None
 
 from water_quality.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact
 from water_quality.entity.config_entity import DataValidationConfig
