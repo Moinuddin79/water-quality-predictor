@@ -20,7 +20,7 @@ env/
 # Artifacts and logs
 artifact/
 logs/
-saved_models/
+
 
 # Jupyter
 .ipynb_checkpoints/
