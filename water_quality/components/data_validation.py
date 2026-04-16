@@ -60,37 +60,37 @@ class DataValidation:
 
     def detect_dataset_drift(self, reference_df: pd.DataFrame, current_df: pd.DataFrame) -> bool:
         """Run EvidentlyAI DataDrift report and save to YAML."""
-    try:
+        try:
         # ✅ If evidently is not installed, skip safely
-        if Report is None:
-            logger.warning("Evidently not installed. Skipping data drift detection.")
-            return True
+            if Report is None:
+                logger.warning("Evidently not installed. Skipping data drift detection.")
+                return True
 
-        report = Report(metrics=[DataDriftPreset()])
-        report.run(reference_data=reference_df, current_data=current_df)
-        report_dict = report.as_dict()
+            report = Report(metrics=[DataDriftPreset()])
+            report.run(reference_data=reference_df, current_data=current_df)
+            report_dict = report.as_dict()
 
-        drift_status = report_dict["metrics"][0]["result"]["dataset_drift"]
-        drift_share = report_dict["metrics"][0]["result"]["drift_share"]
+            drift_status = report_dict["metrics"][0]["result"]["dataset_drift"]
+            drift_share = report_dict["metrics"][0]["result"]["drift_share"]
 
-        drift_report = {
-            "drift_detected": bool(drift_status),
-            "drift_share": float(drift_share),
-            "columns_drifted": int(
-                report_dict["metrics"][0]["result"]["number_of_drifted_columns"]
-            ),
-        }
+            drift_report = {
+                "drift_detected": bool(drift_status),
+                "drift_share": float(drift_share),
+                "columns_drifted": int(
+                    report_dict["metrics"][0]["result"]["number_of_drifted_columns"]
+                ),
+            }
 
-        write_yaml_file(
-            file_path=self.data_validation_config.drift_report_file_path,
-            content=drift_report,
-        )
+            write_yaml_file(
+                file_path=self.data_validation_config.drift_report_file_path,
+                content=drift_report,
+            )
 
-        logger.info(f"Drift report: {drift_report}")
-        return not drift_status
+            logger.info(f"Drift report: {drift_report}")
+            return not drift_status
 
-    except Exception as e:
-        raise WaterQualityException(e, sys)
+        except Exception as e:
+            raise WaterQualityException(e, sys)
 
     def initiate_data_validation(self) -> DataValidationArtifact:
         try:
