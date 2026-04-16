@@ -1,11 +1,14 @@
 import os
 import sys
 import pandas as pd
-from evidently.metric_preset import DataDriftPreset
+
+# ✅ Safe import for evidently
 try:
     from evidently.report import Report
+    from evidently.metric_preset import DataDriftPreset
 except ImportError:
     Report = None
+    DataDriftPreset = None
 
 from water_quality.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact
 from water_quality.entity.config_entity import DataValidationConfig
@@ -61,8 +64,8 @@ class DataValidation:
     def detect_dataset_drift(self, reference_df: pd.DataFrame, current_df: pd.DataFrame) -> bool:
         """Run EvidentlyAI DataDrift report and save to YAML."""
         try:
-        # ✅ If evidently is not installed, skip safely
-            if Report is None:
+            # ✅ Skip if evidently not installed
+            if Report is None or DataDriftPreset is None:
                 logger.warning("Evidently not installed. Skipping data drift detection.")
                 return True
 
